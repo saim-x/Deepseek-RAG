@@ -1,0 +1,17 @@
+# Ignore virtual environments
+venv/
+pdfs/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# IDE settings (optional, depending on your editor)
+.idea/
+.vscode/
