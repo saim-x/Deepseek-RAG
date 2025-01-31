@@ -12,10 +12,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.memory import ConversationBufferWindowMemory
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_nomic import NomicEmbeddings
 
 # Configuration
 DEFAULT_MODEL = "deepseek-r1:1.5b"
-EMBEDDING_MODEL = "deepseek-r1:1.5b"
+EMBEDDING_MODEL = "nomic-embed-text-v1.5"
 VECTOR_DB_PATH = "vector_db/"
 PDF_STORAGE = "pdf_storage/"
 MAX_FILE_SIZE_MB = 50
@@ -73,7 +74,7 @@ def clear_vector_store():
 # Database management
 class VectorDBManager:
     def __init__(self):
-        self.embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+        self.embeddings = NomicEmbeddings(model=EMBEDDING_MODEL)
         self.db = None
         
     def initialize_db(self):
