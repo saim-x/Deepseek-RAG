@@ -78,7 +78,6 @@ class VectorDBManager:
         self.db = None
         
     def initialize_db(self):
-        # Create Chroma instance with persistence settings
         self.db = Chroma(
             persist_directory=VECTOR_DB_PATH,
             embedding_function=self.embeddings,
@@ -88,13 +87,18 @@ class VectorDBManager:
     def add_documents(self, documents):
         if not self.db:
             self.initialize_db()
-        # Add documents to the collection
         self.db.add_documents(documents)
         
     def similarity_search(self, query, k=5):
         if not self.db:
             self.initialize_db()
-        return self.db.similarity_search(query, k=k)
+        # Using MMR instead of standard similarity search
+        return self.db.max_marginal_relevance_search(
+            query, 
+            k=k,
+            fetch_k=20,  # Fetch more documents initially for better diversity
+            lambda_mult=0.7  # Balance between relevance (1.0) and diversity (0.0)
+        )
         
 vector_db_manager = VectorDBManager()
 
