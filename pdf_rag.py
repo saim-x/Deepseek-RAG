@@ -1,4 +1,3 @@
-
 import streamlit as st
 import os
 import time
@@ -63,6 +62,14 @@ Context:
 <|assistant|>
 """
 
+# Add this near the start of the file, after the imports
+def clear_vector_store():
+    """Clear the vector store directory"""
+    if os.path.exists(VECTOR_DB_PATH):
+        import shutil
+        shutil.rmtree(VECTOR_DB_PATH)
+    os.makedirs(VECTOR_DB_PATH, exist_ok=True)
+
 # Database management
 class VectorDBManager:
     def __init__(self):
@@ -70,14 +77,17 @@ class VectorDBManager:
         self.db = None
         
     def initialize_db(self):
+        # Create Chroma instance with persistence settings
         self.db = Chroma(
             persist_directory=VECTOR_DB_PATH,
-            embedding_function=self.embeddings
+            embedding_function=self.embeddings,
+            collection_name="pdf_collection"
         )
         
     def add_documents(self, documents):
         if not self.db:
             self.initialize_db()
+        # Add documents to the collection
         self.db.add_documents(documents)
         
     def similarity_search(self, query, k=5):
@@ -154,6 +164,7 @@ def sidebar_controls():
             selected_doc = st.selectbox("Active Documents", st.session_state.uploaded_files)
             if st.button("Clear Documents"):
                 st.session_state.uploaded_files = []
+                clear_vector_store()
                 vector_db_manager.db = None
                 
         return {
